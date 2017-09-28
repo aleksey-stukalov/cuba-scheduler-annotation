@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="com.acc.cuba.tools.scheduler.web.schedulerloaderlog.SchedulerLoaderLogBrowse"
+        focusComponent="schedulerLoaderLogsTable"
+        lookupComponent="schedulerLoaderLogsTable"
+        messagesPack="com.acc.cuba.tools.scheduler.web.schedulerloaderlog">
+    <dsContext>
+        <groupDatasource id="schedulerLoaderLogsDs"
+                         class="com.acc.cuba.tools.scheduler.entity.SchedulerLoaderLog"
+                         view="scheduler-loader-log-browse">
+            <query>
+                <![CDATA[select e from scheduler$SchedulerLoaderLog e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="schedulerLoaderLogsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="schedulerLoaderLogsTable"
+                datasource="schedulerLoaderLogsDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="schedulerLoaderLogsTable"
+                    width="100%">
+            <actions>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="code"/>
+                <column id="scheduledTask"/>
+            </columns>
+            <rows datasource="schedulerLoaderLogsDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="removeBtn"
+                        action="schedulerLoaderLogsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

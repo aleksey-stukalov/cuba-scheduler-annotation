@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               dependsOn="com.haulmont.cuba">
+    <module blocks="*"
+            name="global">
+        <artifact appJar="true"
+                  name="scheduler-global"/>
+        <property name="cuba.persistenceConfig"
+                  value="+com/acc/cuba/tools/scheduler/persistence.xml"/>
+        <property name="cuba.metadataConfig"
+                  value="+com/acc/cuba/tools/scheduler/metadata.xml"/>
+        <property name="cuba.viewsConfig"
+                  value="+com/acc/cuba/tools/scheduler/views.xml"/>
+    </module>
+    <module blocks="core"
+            dependsOn="global"
+            name="core">
+        <artifact appJar="true"
+                  name="scheduler-core"/>
+        <artifact classifier="db"
+                  configuration="dbscripts"
+                  ext="zip"
+                  name="scheduler-core"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/acc/cuba/tools/scheduler/spring.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.acc.cuba.tools.scheduler.core"/>
+    </module>
+    <module blocks="web,desktop"
+            dependsOn="global"
+            name="gui">
+        <artifact appJar="true"
+                  name="scheduler-gui"/>
+    </module>
+    <module blocks="web"
+            dependsOn="gui"
+            name="web">
+        <artifact appJar="true"
+                  name="scheduler-web"/>
+        <artifact classifier="web"
+                  configuration="webcontent"
+                  ext="zip"
+                  name="scheduler-web"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/acc/cuba/tools/scheduler/web-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/acc/cuba/tools/scheduler/web-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig"
+                  value="+com/acc/cuba/tools/scheduler/web-screens.xml"/>
+        <property name="cuba.menuConfig"
+                  value="+com/acc/cuba/tools/scheduler/web-menu.xml"/>
+        <property name="cuba.permissionConfig"
+                  value="+com/acc/cuba/tools/scheduler/web-permissions.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.acc.cuba.tools.scheduler.web"/>
+    </module>
+</app-component>

@@ -1,0 +1,6 @@
+rootProject.name = 'cuba-scheduler-annotation'
+include(':scheduler-global', ':scheduler-core', ':scheduler-gui', ':scheduler-web')
+project(':scheduler-global').projectDir = new File(settingsDir, 'modules/global')
+project(':scheduler-core').projectDir = new File(settingsDir, 'modules/core')
+project(':scheduler-gui').projectDir = new File(settingsDir, 'modules/gui')
+project(':scheduler-web').projectDir = new File(settingsDir, 'modules/web')

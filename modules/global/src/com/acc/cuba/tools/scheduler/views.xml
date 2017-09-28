@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="com.acc.cuba.tools.scheduler.entity.SchedulerLoaderLog"
+          extends="_local"
+          name="scheduler-loader-log-browse">
+        <property name="scheduledTask"
+                  view="_minimal"/>
+    </view>
+</views>

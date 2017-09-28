@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <include file="com/acc/cuba/tools/scheduler/screens.xml"/>
+    <screen id="scheduler$SchedulerLoaderLog.browse"
+            template="com/acc/cuba/tools/scheduler/web/schedulerloaderlog/scheduler-loader-log-browse.xml"/>
+</screen-config>
