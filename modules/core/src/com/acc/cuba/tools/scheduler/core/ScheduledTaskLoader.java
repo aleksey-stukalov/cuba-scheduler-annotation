@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by aleksey on 21/09/2017.
+ * Created by Aleksey Stukalov on 21/09/2017.
  */
 @Component
 public class ScheduledTaskLoader implements BeanPostProcessor {
@@ -51,7 +51,7 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
 
     private List<ScheduledMethodContext> scheduleAnnotatedMethods = new ArrayList<>();
 
-    boolean isScheduledTaskLoaded(String code) {
+    protected boolean isScheduledTaskLoaded(String code) {
         SchedulerLoaderLog loaderLog =
             dataManager.load(LoadContext.create(SchedulerLoaderLog.class)
                     .setQuery(LoadContext.createQuery("select e from scheduler$SchedulerLoaderLog e where e.code = :code")
@@ -62,15 +62,18 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
 
     public void loadScheduledMethods() {
         for (ScheduledMethodContext smc : scheduleAnnotatedMethods) {
-            for (ScheduledBeanMethod scheduleConfig : smc.getScheduledBeanMethods()) {
+            for (ScheduledBeanMethod scheduleConfig : smc.getScheduledBeanMethods())
+            try {
                 loadTaskForScheduledBeanMethod(smc.getBeanName(), smc.getMethod(), scheduleConfig);
+            } catch (WrongSchedulerDefinitionException e) {
+                log.error(e.getMessage(), e);
             }
         }
     }
 
-    public boolean loadTaskForScheduledBeanMethod(String beanName, Method method, ScheduledBeanMethod config) {
+    protected boolean loadTaskForScheduledBeanMethod(String beanName, Method method, ScheduledBeanMethod config) {
         if (isScheduledTaskLoaded(config.code())) {
-            log.info("Scheduler has already been imported for bean: {}, method: {}", beanName, method.getName());
+            log.info(String.format("Scheduler [%s] has already been imported for bean: %s, method: %s", config.code(), beanName, method.getName()));
             return false;
         }
 
@@ -92,7 +95,7 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
 
             //set parameters
             if (method.getParameters().length != config.methodParams().length)
-                throw new WrongSchedulerDefinitionException(String.format("@MethodParam[] definition doesn't comply the actual number parameters of the method for bean: %s, method: %s", beanName, method.getName()));
+                throw new WrongSchedulerDefinitionException(String.format("Scheduler [%s] definition doesn't comply the actual parameters number: bean: %s, method: %s", config.code(), beanName, method.getName()));
 
             List<Class> paramsTypes = Arrays.stream(method.getParameters()).map(Parameter::getType).collect(Collectors.toList());
 
@@ -111,16 +114,23 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
                     scheduledTask.setCron(config.cron().expression());
                     break;
 
-                case PERIOD:
-                    //pass through
-
                 case FIXED_DELAY:
+                    scheduledTask.setPeriod(config.fixedDelay().period());
+                    try {
+                        Date startDate = (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).parse(config.fixedDelay().startDate());
+                        scheduledTask.setStartDate(startDate);
+                    } catch (ParseException e) {
+                        throw new WrongSchedulerDefinitionException(String.format("Start date was not parsed for scheduler: %s, bean: %s, method: %s", config.code(), beanName, method.getName()), e);
+                    }
+                    break;
+
+                case PERIOD:
                     scheduledTask.setPeriod(config.period().period());
                     try {
                         Date startDate = (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).parse(config.period().startDate());
                         scheduledTask.setStartDate(startDate);
                     } catch (ParseException e) {
-                        throw new RuntimeException(String.format("Start date was not parsed for bean: %s, method: %s", beanName, method.getName()), e);
+                        throw new WrongSchedulerDefinitionException(String.format("Start date was not parsed for scheduler: %s, bean: %s, method: %s", config.code(), beanName, method.getName()), e);
                     }
                     break;
             }
@@ -131,7 +141,7 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
 
             persistence.getEntityManager().persist(scheduledTask);
             persistence.getEntityManager().persist(loaderLog);
-            log.info("Scheduler has been successfully imported for bean: {}, method: {}", beanName, method.getName());
+            log.info("Scheduler [{}] has been successfully imported for bean: {}, method: {}", config.code(), beanName, method.getName());
             tx.commit();
             return true;
         }
@@ -153,8 +163,8 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
             return definedTypes.iterator().next();
         else
             throw new WrongSchedulerDefinitionException(
-                    String.format("Scheduler has more than one Scheduling Type defined for : bean: %s, method: %s",
-                            beanName, method.getName()));
+                    String.format("Scheduler [%s] has more than one Scheduling Type defined for : bean: %s, method: %s",
+                            config.code(), beanName, method.getName()));
     }
 
     @Override
@@ -162,12 +172,8 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
         return bean;
     }
 
-    /** The method scans all beans, that contain methods, annotated as {@link ScheduledBeanMethod}
-     *
-     * @param bean
-     * @param beanName
-     * @return
-     * @throws BeansException
+    /**
+     * The method scans all beans, that contain methods, annotated as {@link ScheduledBeanMethod}
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {

@@ -3,7 +3,7 @@ package com.acc.cuba.tools.scheduler.core.annotation;
 import java.lang.annotation.*;
 
 /**
- * Created by aleksey on 21/09/2017.
+ * Created by Aleksey Stukalov on 21/09/2017.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -20,7 +20,7 @@ public @interface ScheduledBeanMethod {
 
     String userName() default "";
 
-    boolean isSingleton() default false;
+    boolean isSingleton();
 
     boolean isActive() default false;
 
