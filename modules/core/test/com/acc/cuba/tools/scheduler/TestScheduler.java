@@ -32,12 +32,12 @@ public class TestScheduler implements TestSchedulerInterface {
                     @MethodParam(name = "b", value = "b-value"),
                     @MethodParam(name = "code", value = "test-periodical-scheduler")
             },
-            period = @Period(period = 5, startDate = "01.01.2000 00:00:00")
+            period = @Period(period = 5, startDate = "01/01/2000 00:00:00")
     )
     @ScheduledBeanMethod(
             code = "test-fixed-delay-scheduler",
             isSingleton = false,
-            fixedDelay = @FixedDelay(period = 5, startDate = "01.01.2000 00:00:00"),
+            fixedDelay = @FixedDelay(period = 5, startDate = "01/01/2000 00:00:00"),
             methodParams = {
                     @MethodParam(name = "a", value = "a-value-1"),
                     @MethodParam(name = "b", value = "b-value-1"),
@@ -62,12 +62,12 @@ public class TestScheduler implements TestSchedulerInterface {
     @ScheduledBeanMethod(
             code = "exception-when-number-of-parameters-dont-match",
             isSingleton = false,
-            period = @Period(period = 5, startDate = "01.01.2000 00:00:00")
+            period = @Period(period = 5, startDate = "01/01/2000 00:00:00")
     )
     @ScheduledBeanMethod(
             code = "exception-when-two-scheduling-types-defined",
             isSingleton = false,
-            period = @Period(period = 5, startDate = "01.01.2000 00:00:00"),
+            period = @Period(period = 5, startDate = "01/01/2000 00:00:00"),
             cron = @Cron(expression = "1-59/2 * * * *"),
             methodParams = {
                     @MethodParam(name = "arg", value = "arg-value"),
@@ -76,7 +76,10 @@ public class TestScheduler implements TestSchedulerInterface {
     @ScheduledBeanMethod(
             code = "already-exists",
             isSingleton = false,
-            period = @Period(period = 5, startDate = "01.01.2000 00:00:00")
+            period = @Period(period = 5, startDate = "01/01/2000 00:00:00"),
+            methodParams = {
+                @MethodParam(name = "arg", value = "arg-value"),
+            }
     )
     public void testFailedScheduledTasks(String arg) {
         log.debug("This scheduled task should have not been created. If you see this message, then test didn't work");

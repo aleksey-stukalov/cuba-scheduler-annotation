@@ -117,7 +117,7 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
                 case FIXED_DELAY:
                     scheduledTask.setPeriod(config.fixedDelay().period());
                     try {
-                        Date startDate = (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).parse(config.fixedDelay().startDate());
+                        Date startDate = (new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")).parse(config.fixedDelay().startDate());
                         scheduledTask.setStartDate(startDate);
                     } catch (ParseException e) {
                         throw new WrongSchedulerDefinitionException(String.format("Start date was not parsed for scheduler: %s, bean: %s, method: %s", config.code(), beanName, method.getName()), e);
@@ -127,7 +127,7 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
                 case PERIOD:
                     scheduledTask.setPeriod(config.period().period());
                     try {
-                        Date startDate = (new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")).parse(config.period().startDate());
+                        Date startDate = (new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")).parse(config.period().startDate());
                         scheduledTask.setStartDate(startDate);
                     } catch (ParseException e) {
                         throw new WrongSchedulerDefinitionException(String.format("Start date was not parsed for scheduler: %s, bean: %s, method: %s", config.code(), beanName, method.getName()), e);
