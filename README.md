@@ -23,7 +23,7 @@ public class TestScheduler implements TestSchedulerInterface {
             code = "test_scheduler",
             isSingleton = true,
             isActive = true,
-            period = @Period(period = 5, startDate = "01.01.2000 00:00:00"),
+            period = @Period(period = 5, startDate = "01/01/2000 00:00:00"),
             logStart = true,
             methodParams = {
                     @MethodParam(name = "a", value = "a-value"),
