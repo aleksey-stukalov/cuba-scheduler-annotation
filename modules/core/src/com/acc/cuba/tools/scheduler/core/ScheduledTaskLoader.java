@@ -168,12 +168,14 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
     }
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(Object bean, String beanName)
+            throws BeansException {
         return bean;
     }
 
     /**
-     * The method scans all beans, that contain methods, annotated as {@link ScheduledBeanMethod}
+     * The method scans all beans, that contain methods,
+     * annotated as {@link ScheduledBeanMethod}
      */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
