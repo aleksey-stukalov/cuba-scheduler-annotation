@@ -35,3 +35,29 @@ public class TestScheduler implements TestSchedulerInterface {
     }
 }
 ```
+
+## How to Use
+
+Add the _https://dl.bintray.com/aleksey-stukalov/cuba-components_ repo to your _build.gradle_ as it is shown here:
+```
+buildscript {
+    ...
+    repositories {
+        
+        ...
+        maven {
+            url  "https://dl.bintray.com/aleksey-stukalov/cuba-components"
+        }
+    }
+    ...
+}
+```
+
+Add the application component using the CUBA Studio:
+- Artifact group: ```com.acc.cuba.tools.scheduler```
+- Artifact name: ```scheduler-global```
+- Version: pick the compatible version from the table below
+
+| Platform Version | Add-on Version |
+| ---------------- | -------------- |
+| 6.6.4            | 0.1            |
