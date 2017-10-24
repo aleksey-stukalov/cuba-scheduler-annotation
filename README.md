@@ -38,7 +38,7 @@ public class TestScheduler implements TestSchedulerInterface {
 
 ## How to Use
 
-Add the _https://dl.bintray.com/aleksey-stukalov/cuba-components_ repo to your _build.gradle_ as it is shown here:
+Add the ```https://dl.bintray.com/aleksey-stukalov/cuba-components``` repo to your ```build.gradle``` as it is shown here:
 ```
 buildscript {
     ...
@@ -56,7 +56,7 @@ buildscript {
 Add the application component using the CUBA Studio:
 - Artifact group: ```com.acc.cuba.tools.scheduler```
 - Artifact name: ```scheduler-global```
-- Version: pick the compatible version from the table below
+- Version: _pick the compatible version from the table below_
 
 | Platform Version | Add-on Version |
 | ---------------- | -------------- |
