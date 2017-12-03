@@ -31,7 +31,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.acc.cuba.tools.scheduler'
-        version = '0.1'
+        version = '0.3'
         isSnapshot = true
     }
     tomcat {
