@@ -60,4 +60,4 @@ Add the application component using the CUBA Studio:
 
 | Platform Version | Add-on Version |
 | ---------------- | -------------- |
-| 6.6.4            | 0.1            |
+| 6.7.4            | 0.3            |
