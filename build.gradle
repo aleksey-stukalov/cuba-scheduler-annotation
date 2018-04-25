@@ -14,6 +14,7 @@ buildscript {
     }
     dependencies {
         classpath "com.haulmont.gradle:cuba-plugin:$cubaVersion"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
     }
 }
 
@@ -227,3 +228,32 @@ task wrapper(type: Wrapper) {
 }
 
 apply from: 'extra.gradle'
+
+subprojects {
+    apply plugin: 'com.jfrog.bintray'
+
+    bintray {
+        user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+        key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+        configurations = ['archives']
+
+        // make files public ?
+        publish = true
+        // override existing artifacts?
+        override = false
+
+        // metadata
+        pkg {
+            repo = 'cuba-components'
+            name = 'scheduler-annotation'
+            userOrg = 'aleksey-stukalov'
+
+            websiteUrl = 'https://github.com/aleksey-stukalov/cuba-scheduler-annotation'
+            issueTrackerUrl = 'https://github.com/aleksey-stukalov/cuba-scheduler-annotation/projects/1'
+            vcsUrl = 'https://github.com/aleksey-stukalov/cuba-scheduler-annotation.git' // Mandatory for Open Source projects
+            licenses = ["Apache-2.0"]
+            labels = ['cuba-platform', 'opensource']
+        }
+    }
+}
