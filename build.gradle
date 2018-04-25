@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.7.3'
+    ext.cubaVersion = '6.8.4'
     repositories {
         
         maven {
@@ -31,8 +31,8 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.acc.cuba.tools.scheduler'
-        version = '0.3'
-        isSnapshot = true
+        version = "0.4"
+        isSnapshot = false
     }
     tomcat {
         dir = "$project.rootDir/deploy/tomcat"
@@ -223,7 +223,7 @@ task restart(dependsOn: ['stop', ':scheduler-core:deploy', ':scheduler-web:deplo
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4'
+    gradleVersion = '4.3.1'
 }
 
 apply from: 'extra.gradle'

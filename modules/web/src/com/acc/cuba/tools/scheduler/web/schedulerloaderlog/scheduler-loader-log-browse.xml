@@ -31,6 +31,7 @@
             <columns>
                 <column id="code"/>
                 <column id="scheduledTask"/>
+                <column id="schedulerVersion"/>
             </columns>
             <rows datasource="schedulerLoaderLogsDs"/>
             <rowsCount/>

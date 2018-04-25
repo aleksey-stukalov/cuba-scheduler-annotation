@@ -22,7 +22,7 @@ public class AppLifecycle implements AppContext.Listener {
 
     @Override
     public void applicationStarted() {
-        auth.withUser(null, () -> {
+        auth.withSystemUser(() -> {
             taskLoader.loadScheduledMethods();
             return null;
         });

@@ -16,6 +16,11 @@ public @interface ScheduledBeanMethod {
      */
     String code();
 
+    /**
+     If version if 0 update will never happen once it is initially loaded
+     */
+    int version() default 0;
+
     MethodParam[] methodParams() default {};
 
     String userName() default "";

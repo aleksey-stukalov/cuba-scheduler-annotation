@@ -11,9 +11,7 @@ import com.haulmont.cuba.core.app.scheduled.MethodParameterInfo;
 import com.haulmont.cuba.core.entity.ScheduledTask;
 import com.haulmont.cuba.core.entity.ScheduledTaskDefinedBy;
 import com.haulmont.cuba.core.entity.SchedulingType;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.aop.support.AopUtils;
@@ -51,13 +49,11 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
 
     private List<ScheduledMethodContext> scheduleAnnotatedMethods = new ArrayList<>();
 
-    protected boolean isScheduledTaskLoaded(String code) {
-        SchedulerLoaderLog loaderLog =
+    protected SchedulerLoaderLog getLoadedScheduledTaskLog(String code) {
+        return
             dataManager.load(LoadContext.create(SchedulerLoaderLog.class)
                     .setQuery(LoadContext.createQuery("select e from scheduler$SchedulerLoaderLog e where e.code = :code")
                             .setParameter("code", code)));
-
-        return loaderLog != null;
     }
 
     public void loadScheduledMethods() {
@@ -72,13 +68,28 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
     }
 
     protected boolean loadTaskForScheduledBeanMethod(String beanName, Method method, ScheduledBeanMethod config) {
-        if (isScheduledTaskLoaded(config.code())) {
-            log.info(String.format("Scheduler [%s] has already been imported for bean: %s, method: %s", config.code(), beanName, method.getName()));
-            return false;
+        ScheduledTask scheduledTask = null;
+        SchedulerLoaderLog loaderLog = getLoadedScheduledTaskLog(config.code());
+        if (loaderLog != null) {
+
+            if (loaderLog.getSchedulerVersion() == null
+                || config.version() == 0
+                || loaderLog.getSchedulerVersion() <= config.version()) {
+
+                log.info(String.format("Scheduler [%s] has already been imported for bean: %s, method: %s", config.code(), beanName, method.getName()));
+                return false;
+            }
+
+            scheduledTask = loaderLog.getScheduledTask();
         }
 
+
         try (Transaction tx = persistence.createTransaction()) {
-            ScheduledTask scheduledTask = metadata.create(ScheduledTask.class);
+
+            if (scheduledTask == null)
+                scheduledTask = metadata.create(ScheduledTask.class);
+            else
+                scheduledTask = persistence.getEntityManager().merge(scheduledTask);
 
             scheduledTask.setBeanName(beanName);
             scheduledTask.setMethodName(method.getName());
@@ -135,12 +146,21 @@ public class ScheduledTaskLoader implements BeanPostProcessor {
                     break;
             }
 
-            SchedulerLoaderLog loaderLog = metadata.create(SchedulerLoaderLog.class);
+            if (loaderLog == null)
+                loaderLog = metadata.create(SchedulerLoaderLog.class);
+            else
+                loaderLog = persistence.getEntityManager().merge(loaderLog);
+
             loaderLog.setCode(config.code());
+            loaderLog.setVersion(config.version());
             loaderLog.setScheduledTask(scheduledTask);
 
-            persistence.getEntityManager().persist(scheduledTask);
-            persistence.getEntityManager().persist(loaderLog);
+            if (PersistenceHelper.isNew(scheduledTask))
+                persistence.getEntityManager().persist(scheduledTask);
+
+            if (PersistenceHelper.isNew(loaderLog))
+                persistence.getEntityManager().persist(loaderLog);
+
             log.info("Scheduler [{}] has been successfully imported for bean: {}, method: {}", config.code(), beanName, method.getName());
             tx.commit();
             return true;

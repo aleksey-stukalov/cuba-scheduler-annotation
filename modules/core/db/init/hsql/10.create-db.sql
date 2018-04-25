@@ -10,6 +10,7 @@ create table SCHEDULER_SCHEDULER_LOADER_LOG (
     DELETED_BY varchar(50),
     --
     CODE varchar(255) not null,
+    SCHEDULER_VERSION integer not null,
     SCHEDULED_TASK_ID varchar(36) not null,
     --
     primary key (ID)

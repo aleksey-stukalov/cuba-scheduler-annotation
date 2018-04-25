@@ -6,4 +6,10 @@
         <property name="scheduledTask"
                   view="_minimal"/>
     </view>
+    <view class="com.acc.cuba.tools.scheduler.entity.SchedulerLoaderLog"
+          extends="_local"
+          name="scheduler-loader-log-full-view">
+        <property name="scheduledTask"
+                  view="_local"/>
+    </view>
 </views>

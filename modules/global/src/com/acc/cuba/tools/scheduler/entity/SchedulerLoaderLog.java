@@ -14,9 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import javax.validation.constraints.NotNull;
+import javax.persistence.Index;
 
 @NamePattern("%s|code")
-@Table(name = "SCHEDULER_SCHEDULER_LOADER_LOG")
+@Table(name = "SCHEDULER_SCHEDULER_LOADER_LOG", indexes = {
+    @Index(name = "IDX_SCHEDULER_SCHEDULER_LOADER_LOG", columnList = "SCHEDULED_TASK_ID, VERSION")
+})
 @Entity(name = "scheduler$SchedulerLoaderLog")
 public class SchedulerLoaderLog extends StandardEntity {
     private static final long serialVersionUID = -2242981040158529077L;
@@ -24,11 +28,24 @@ public class SchedulerLoaderLog extends StandardEntity {
     @Column(name = "CODE", nullable = false, unique = true)
     protected String code;
 
+    @NotNull
+    @Column(name = "SCHEDULER_VERSION", nullable = false)
+    protected Integer schedulerVersion;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "SCHEDULED_TASK_ID", unique = true)
     @OnDeleteInverse(DeletePolicy.CASCADE)
     @OnDelete(DeletePolicy.CASCADE)
     protected ScheduledTask scheduledTask;
+
+    public void setSchedulerVersion(Integer schedulerVersion) {
+        this.schedulerVersion = schedulerVersion;
+    }
+
+    public Integer getSchedulerVersion() {
+        return schedulerVersion;
+    }
+
 
     public void setCode(String code) {
         this.code = code;
